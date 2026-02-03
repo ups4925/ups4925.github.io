@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The UPS Store Spotswood NJ</title>
+
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+
+  <style>
+    :root{
+      --lightblue:#7ec8ff;
+      --green:#28a745;
+      --red:#dc3545;
+      --card:#0d0d0d;
+      --text:#f2f2f2;
+      --muted:#b5b5b5;
+      --border: rgba(255,255,255,.12);
+    }
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:#000;
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:960px;
+      margin:0 auto;
+      padding:28px 16px 60px;
+    }
+
+    /* Header */
+    .logo{
+      display:flex;
+      justify-content:center;
+    }
+    .logo img{
+      width:420px;
+      max-width:90%;
+    }
+    h1{
+      text-align:center;
+      color:var(--lightblue);
+      font-size:40px;
+      margin:14px 0 24px;
+      font-weight:800;
+    }
+
+    /* Sections */
+    .section{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:24px;
+      box-shadow:0 12px 28px rgba(0,0,0,.4);
+      margin-bottom:20px;
+    }
+
+    .sectionTitle{
+      text-align:center;
+      font-weight:900;
+      font-size:22px;
+      margin-bottom:6px;
+    }
+
+    .sectionTip{
+      text-align:center;
+      font-size:14px;
+      color:var(--muted);
+      margin-bottom:20px;
+    }
+
+    /* BIG COPY BUTTONS */
+    .copyRow{
+      display:flex;
+      gap:20px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    .copyBtn{
+      flex:1;
+      min-width:260px;
+      border:none;
+      border-radius:18px;
+      padding:28px 24px;
+      font-size:24px;
+      font-weight:900;
+      cursor:pointer;
+      color:#fff;
+      box-shadow:0 16px 36px rgba(0,0,0,.45);
+      transition: transform .06s ease, filter .12s ease;
+    }
+    .copyBtn:hover{ filter:brightness(1.08); }
+    .copyBtn:active{ transform:translateY(2px); }
+
+    .green{ background:var(--green); }
+    .red{ background:var(--red); }
+
+    .hint{
+      text-align:center;
+      margin-top:18px;
+      min-height:22px;
+      font-weight:700;
+      color:var(--muted);
+    }
+
+    /* QR SECTION (LESS PROMINENT) */
+    .qrRow{
+      display:flex;
+      gap:16px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    .qrCard{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(255,255,255,.03);
+      text-align:center;
+      max-width:200px;
+    }
+
+    .qrCard img{
+      width:150px;
+      background:#fff;
+      padding:6px;
+      border-radius:10px;
+    }
+
+    .qrLabel{
+      margin-top:8px;
+      font-weight:800;
+      font-size:14px;
+    }
+
+    .qrSub{
+      font-size:12px;
+      color:var(--muted);
+      word-break:break-word;
+    }
+
+    @media (max-width:720px){
+      .copyBtn{ font-size:22px; padding:24px; }
+      .qrCard img{ width:170px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- HEADER -->
+    <div class="logo">
+      <img src="ups_logo.png" alt="UPS Store Logo">
+    </div>
+    <h1>The UPS Store Spotswood NJ</h1>
+
+    <!-- COPY EMAILS (PRIMARY) -->
+    <div class="section">
+      <div class="sectionTitle">Copy Emails</div>
+      <div class="sectionTip">
+        If copy is blocked, we’ll open your mail app instead.
+      </div>
+
+      <div class="copyRow">
+        <button class="copyBtn green" id="copyStore">
+          Copy Store Email
+        </button>
+        <button class="copyBtn red" id="copyGmail">
+          Copy Gmail
+        </button>
+      </div>
+
+      <div class="hint" id="hint"></div>
+    </div>
+
+    <!-- QR EMAILS (SECONDARY) -->
+    <div class="section">
+      <div class="sectionTitle">Tap or Scan to Email</div>
+      <div class="sectionTip">
+        Tapping a QR opens the email app, same as scanning.
+      </div>
+
+      <div class="qrRow">
+        <a class="qrCard" href="mailto:store4925@theupsstore.com">
+          <img src="qr_store_email.png" alt="Store Email QR">
+          <div class="qrLabel">Store Email</div>
+          <div class="qrSub">store4925@theupsstore.com</div>
+        </a>
+
+        <a class="qrCard" href="mailto:store4925@gmail.com">
+          <img src="qr_gmail.png" alt="Gmail QR">
+          <div class="qrLabel">Gmail</div>
+          <div class="qrSub">store4925@gmail.com</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const hint = document.getElementById("hint");
+
+    async function copyEmail(email){
+      try{
+        await navigator.clipboard.writeText(email);
+        hint.textContent = "Copied: " + email;
+      }catch{
+        window.location.href = "mailto:" + email;
+        hint.textContent = "Opened mail app";
+      }
+      setTimeout(()=>hint.textContent="",2200);
+    }
+
+    document.getElementById("copyStore").onclick = () =>
+      copyEmail("store4925@theupsstore.com");
+
+    document.getElementById("copyGmail").onclick = () =>
+      copyEmail("store4925@gmail.com");
+  </script>
+</body>
+</html>
