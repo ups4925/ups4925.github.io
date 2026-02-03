@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The UPS Store Spotswood NJ</title>
+
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+
+  <style>
+    :root{
+      --lightblue:#7ec8ff;
+      --green:#28a745;
+      --red:#dc3545;
+      --blue:#0d6efd;
+      --card:#0d0d0d;
+      --text:#f2f2f2;
+      --muted:#b5b5b5;
+      --border: rgba(255,255,255,.12);
+    }
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:#000;
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:960px;
+      margin:0 auto;
+      padding:28px 16px 60px;
+    }
+
+    /* Header */
+    .logo{
+      display:flex;
+      justify-content:center;
+    }
+    .logo img{
+      width:420px;
+      max-width:90%;
+    }
+    h1{
+      text-align:center;
+      color:var(--lightblue);
+      font-size:40px;
+      margin:14px 0 24px;
+      font-weight:800;
+    }
+
+    /* Sections */
+    .section{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:24px;
+      box-shadow:0 12px 28px rgba(0,0,0,.4);
+      margin-bottom:20px;
+    }
+
+    .sectionTitle{
+      text-align:center;
+      font-weight:900;
+      font-size:22px;
+      margin-bottom:6px;
+    }
+
+    .sectionTip{
+      text-align:center;
+      font-size:14px;
+      color:var(--muted);
+      margin-bottom:20px;
+    }
+
+    /* BIG COPY BUTTONS */
+    .copyRow{
+      display:flex;
+      gap:20px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    .copyBtn{
+      flex:1;
+      min-width:260px;
+      border:none;
+      border-radius:18px;
+      padding:28px 24px;
+      font-size:24px;
+      font-weight:900;
+      cursor:pointer;
+      color:#fff;
+      box-shadow:0 16px 36px rgba(0,0,0,.45);
+      transition: transform .06s ease, filter .12s ease;
+    }
+    .copyBtn:hover{ filter:brightness(1.08); }
+    .copyBtn:active{ transform:translateY(2px); }
+
+    .green{ background:var(--green); }
+    .red{ background:var(--red); }
+
+    /* Guest Wi-Fi button uses the light blue from your theme */
+    .lightblue{ background:var(--lightblue); color:#000; }
+
+    /* FULL-WIDTH LINK BUTTON UNDER COPY BUTTONS */
+    .fullRow{
+      margin-top:20px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .fullBtn{
+      width:100%;
+      border:none;
+      border-radius:18px;
+      padding:28px 24px;
+      font-size:24px;
+      font-weight:900;
+      cursor:pointer;
+      color:#fff;
+      box-shadow:0 16px 36px rgba(0,0,0,.45);
+      transition: transform .06s ease, filter .12s ease;
+      background: var(--blue);
+    }
+    .fullBtn:hover{ filter:brightness(1.08); }
+    .fullBtn:active{ transform:translateY(2px); }
+
+    .hint{
+      text-align:center;
+      margin-top:18px;
+      min-height:22px;
+      font-weight:700;
+      color:var(--muted);
+    }
+
+    /* QR SECTION (LESS PROMINENT) */
+    .qrRow{
+      display:flex;
+      gap:16px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    .qrCard{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(255,255,255,.03);
+      text-align:center;
+      max-width:220px;
+      text-decoration:none;
+      color:inherit;
+    }
+
+    .qrCard img{
+      width:150px;
+      background:#fff;
+      padding:6px;
+      border-radius:10px;
+      display:block;
+      margin:0 auto;
+    }
+
+    .qrLabel{
+      margin-top:8px;
+      font-weight:800;
+      font-size:14px;
+    }
+
+    .qrSub{
+      font-size:12px;
+      color:var(--muted);
+      word-break:break-word;
+    }
+
+    /* Wi-Fi inputs */
+    .formRow{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-bottom:14px;
+    }
+    .field{
+      flex:1;
+      min-width:220px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    label{ font-size:12px; color:var(--muted); font-weight:800; }
+    input, select{
+      border:1px solid var(--border);
+      background:#070707;
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:14px;
+      outline:none;
+    }
+    input:focus, select:focus{ border-color: rgba(126,200,255,.8); }
+
+    .miniBtn{
+      border:none;
+      border-radius:12px;
+      padding:12px 14px;
+      font-weight:900;
+      cursor:pointer;
+      color:#000;
+      background:var(--lightblue);
+      box-shadow:0 10px 22px rgba(0,0,0,.35);
+    }
+    .miniBtn:active{ transform:translateY(1px); }
+
+    /* UPS logo overlay (visual only, scan-safe) */
+    .qrLogoWrap{
+      position:relative;
+      display:inline-block;
+    }
+    .wifiImg{
+      width:180px;
+      height:180px;
+      background:#fff;
+      padding:6px;
+      border-radius:10px;
+      display:block;
+      margin:0 auto;
+    }
+    .qrLogo{
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%, -50%);
+      width:42px;
+      background:#fff;
+      padding:6px;
+      border-radius:8px;
+      pointer-events:none;
+      box-shadow:0 4px 10px rgba(0,0,0,.25);
+    }
+
+    @media (max-width:720px){
+      .copyBtn{ font-size:22px; padding:24px; }
+      .fullBtn{ font-size:22px; padding:24px; }
+      .qrCard img{ width:170px; }
+      .wifiImg{ width:190px; height:190px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- HEADER -->
+    <div class="logo">
+      <img src="ups_logo.png" alt="UPS Store Logo">
+    </div>
+    <h1>The UPS Store Spotswood NJ</h1>
+
+    <!-- COPY EMAILS (PRIMARY) -->
+    <div class="section">
+      <div class="sectionTitle">Copy Emails</div>
+      <div class="sectionTip">
+        If copy is blocked, we’ll open your mail app instead.
+      </div>
+
+      <div class="copyRow">
+        <button class="copyBtn green" id="copyStore">Copy Store Email</button>
+
+        <!-- Guest Wi-Fi button (copies Wi-Fi details) -->
+        <button class="copyBtn lightblue" id="copyWifi">Guest Wi-Fi</button>
+
+        <button class="copyBtn red" id="copyGmail">Copy Gmail</button>
+      </div>
+
+      <!-- NEW FULL-WIDTH BUTTON -->
+      <div class="fullRow">
+        <button class="fullBtn" id="goBoxCalc">Box Calculator</button>
+      </div>
+
+      <div class="hint" id="hint"></div>
+    </div>
+
+    <!-- WI-FI SECTION -->
+    <div class="section">
+      <div class="sectionTitle">Guest Wi-Fi</div>
+      <div class="sectionTip">Tap to copy, or scan to connect.</div>
+
+      <div class="formRow">
+        <div class="field">
+          <label for="wifiName">Wi-Fi name</label>
+          <input id="wifiName" value="UPS-Guest" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label for="wifiDetails">Wi-Fi details</label>
+
+          <!-- ======================================================
+               CHANGE THIS VALUE MONTHLY (NO SENSITIVE WORDS USED)
+               ====================================================== -->
+          <input id="wifiDetails" value="S0m3L!k3FL0weRS0t#3r5C@ndy" autocomplete="off">
+        </div>
+
+<!-- ======================================================
+               CHANGE THIS VALUE MONTHLY (NO SENSITIVE WORDS USED)
+               ====================================================== -->
+
+        
+        <div class="field">
+          <label for="wifiType">Wi-Fi type</label>
+          <select id="wifiType">
+            <option value="WPA" selected>WPA/WPA2</option>
+            <option value="WEP">WEP</option>
+            <option value="">Open</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fullRow">
+        <button class="miniBtn" id="saveWifiImage">Save image</button>
+      </div>
+
+      <div class="qrRow">
+        <div class="qrCard" style="cursor:default;">
+          <div class="qrLogoWrap">
+            <img id="wifiImg" class="wifiImg" alt="Wi-Fi">
+            <img src="ups_logo.png" class="qrLogo" alt="UPS Logo">
+          </div>
+          <div class="qrLabel">Guest Wi-Fi</div>
+          <div class="qrSub" id="wifiSub"></div>
+        </div>
+      </div>
+
+      <div class="hint" id="wifiHint"></div>
+    </div>
+
+    <!-- QR EMAILS (SECONDARY) -->
+    <div class="section">
+      <div class="sectionTitle">Tap or Scan to Email</div>
+      <div class="sectionTip">
+        Tapping a QR opens the email app, same as scanning.
+      </div>
+
+      <div class="qrRow">
+        <a class="qrCard" href="mailto:store4925@theupsstore.com">
+          <img src="qr_store_email.png" alt="Store Email QR">
+          <div class="qrLabel">Store Email</div>
+          <div class="qrSub">store4925@theupsstore.com</div>
+        </a>
+
+        <a class="qrCard" href="mailto:store4925@gmail.com">
+          <img src="qr_gmail.png" alt="Gmail QR">
+          <div class="qrLabel">Gmail</div>
+          <div class="qrSub">store4925@gmail.com</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const hint = document.getElementById("hint");
+
+    async function copyEmail(email){
+      try{
+        await navigator.clipboard.writeText(email);
+        hint.textContent = "Copied: " + email;
+      }catch{
+        window.location.href = "mailto:" + email;
+        hint.textContent = "Opened mail app";
+      }
+      setTimeout(()=>hint.textContent="",2200);
+    }
+
+    document.getElementById("copyStore").onclick = () =>
+      copyEmail("store4925@theupsstore.com");
+
+    document.getElementById("copyGmail").onclick = () =>
+      copyEmail("store4925@gmail.com");
+
+    // go to box calculator page
+    document.getElementById("goBoxCalc").onclick = () => {
+      window.location.href = "https://ups4925.github.io/box.html";
+    };
+
+    const wifiNameEl = document.getElementById("wifiName");
+    const wifiDetailsEl = document.getElementById("wifiDetails");
+    const wifiTypeEl = document.getElementById("wifiType");
+
+    const wifiImg = document.getElementById("wifiImg");
+    const wifiSub = document.getElementById("wifiSub");
+    const wifiHint = document.getElementById("wifiHint");
+
+    document.getElementById("copyWifi").onclick = async () => {
+      try{
+        await navigator.clipboard.writeText(wifiDetailsEl.value);
+        hint.textContent = "Wi-Fi copied";
+      }catch{
+        hint.textContent = "Unable to copy";
+      }
+      setTimeout(()=>hint.textContent="",2200);
+    };
+
+    function escWifi(str){
+      return String(str).replace(/([\\;,:"])/g, "\\$1");
+    }
+
+    function makeWifiText(){
+      const n = escWifi(wifiNameEl.value.trim());
+      const t = wifiTypeEl.value;
+      const d = escWifi(wifiDetailsEl.value);
+
+      if(!t){
+        return `WIFI:T:;S:${n};;`;
+      }
+      return `WIFI:T:${t};S:${n};P:${d};;`;
+    }
+
+    function updateWifi(){
+      const nRaw = wifiNameEl.value.trim();
+      const tRaw = wifiTypeEl.value;
+
+      wifiSub.textContent = tRaw ? `${nRaw} • ${tRaw}` : `${nRaw} • Open`;
+
+      const text = makeWifiText();
+      const url =
+        "https://chart.googleapis.com/chart?cht=qr&chs=320x320&chld=M|1&chl=" +
+        encodeURIComponent(text);
+
+      wifiImg.src = url;
+
+      wifiHint.textContent = "Updated";
+      setTimeout(()=>wifiHint.textContent="",1600);
+    }
+
+    wifiNameEl.addEventListener("input", updateWifi);
+    wifiDetailsEl.addEventListener("input", updateWifi);
+    wifiTypeEl.addEventListener("change", updateWifi);
+
+    document.getElementById("saveWifiImage").addEventListener("click", () => {
+      const a = document.createElement("a");
+      a.href = wifiImg.src;
+      a.target = "_blank";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    });
+
+    updateWifi();
+  </script>
+</body>
+</html>
