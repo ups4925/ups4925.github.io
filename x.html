@@ -39,7 +39,6 @@
       padding:28px 16px 60px;
     }
 
-    /* Header */
     .logo{
       display:flex;
       justify-content:center;
@@ -48,6 +47,7 @@
       width:420px;
       max-width:90%;
     }
+
     h1{
       text-align:center;
       color:var(--lightblue);
@@ -56,7 +56,6 @@
       font-weight:800;
     }
 
-    /* Sections */
     .section{
       background:var(--card);
       border:1px solid var(--border);
@@ -80,7 +79,6 @@
       margin-bottom:20px;
     }
 
-    /* BIG COPY BUTTONS */
     .copyRow{
       display:flex;
       gap:20px;
@@ -99,18 +97,16 @@
       cursor:pointer;
       color:#fff;
       box-shadow:0 16px 36px rgba(0,0,0,.45);
-      transition: transform .06s ease, filter .12s ease;
     }
-    .copyBtn:hover{ filter:brightness(1.08); }
-    .copyBtn:active{ transform:translateY(2px); }
 
     .green{ background:var(--green); }
     .red{ background:var(--red); }
 
-    /* Guest Wi-Fi button uses the light blue from your theme */
-    .lightblue{ background:var(--lightblue); color:#000; }
+    .wifiBtn{
+      background:var(--lightblue);
+      color:#000;
+    }
 
-    /* FULL-WIDTH LINK BUTTON UNDER COPY BUTTONS */
     .fullRow{
       margin-top:20px;
       display:flex;
@@ -127,11 +123,8 @@
       cursor:pointer;
       color:#fff;
       box-shadow:0 16px 36px rgba(0,0,0,.45);
-      transition: transform .06s ease, filter .12s ease;
       background: var(--blue);
     }
-    .fullBtn:hover{ filter:brightness(1.08); }
-    .fullBtn:active{ transform:translateY(2px); }
 
     .hint{
       text-align:center;
@@ -141,47 +134,6 @@
       color:var(--muted);
     }
 
-    /* QR SECTION (LESS PROMINENT) */
-    .qrRow{
-      display:flex;
-      gap:16px;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-
-    .qrCard{
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:12px;
-      background:rgba(255,255,255,.03);
-      text-align:center;
-      max-width:220px;
-      text-decoration:none;
-      color:inherit;
-    }
-
-    .qrCard img{
-      width:150px;
-      background:#fff;
-      padding:6px;
-      border-radius:10px;
-      display:block;
-      margin:0 auto;
-    }
-
-    .qrLabel{
-      margin-top:8px;
-      font-weight:800;
-      font-size:14px;
-    }
-
-    .qrSub{
-      font-size:12px;
-      color:var(--muted);
-      word-break:break-word;
-    }
-
-    /* Wi-Fi inputs */
     .formRow{
       display:flex;
       gap:12px;
@@ -189,6 +141,7 @@
       justify-content:center;
       margin-bottom:14px;
     }
+
     .field{
       flex:1;
       min-width:220px;
@@ -196,7 +149,13 @@
       flex-direction:column;
       gap:6px;
     }
-    label{ font-size:12px; color:var(--muted); font-weight:800; }
+
+    label{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+    }
+
     input, select{
       border:1px solid var(--border);
       background:#070707;
@@ -204,27 +163,24 @@
       border-radius:12px;
       padding:10px 12px;
       font-size:14px;
-      outline:none;
     }
-    input:focus, select:focus{ border-color: rgba(126,200,255,.8); }
 
     .miniBtn{
       border:none;
       border-radius:12px;
-      padding:12px 14px;
+      padding:14px 18px;
       font-weight:900;
       cursor:pointer;
       color:#000;
       background:var(--lightblue);
       box-shadow:0 10px 22px rgba(0,0,0,.35);
     }
-    .miniBtn:active{ transform:translateY(1px); }
 
-    /* UPS logo overlay (visual only, scan-safe) */
     .qrLogoWrap{
       position:relative;
       display:inline-block;
     }
+
     .wifiImg{
       width:180px;
       height:180px;
@@ -234,6 +190,7 @@
       display:block;
       margin:0 auto;
     }
+
     .qrLogo{
       position:absolute;
       top:50%;
@@ -244,216 +201,122 @@
       padding:6px;
       border-radius:8px;
       pointer-events:none;
-      box-shadow:0 4px 10px rgba(0,0,0,.25);
-    }
-
-    @media (max-width:720px){
-      .copyBtn{ font-size:22px; padding:24px; }
-      .fullBtn{ font-size:22px; padding:24px; }
-      .qrCard img{ width:170px; }
-      .wifiImg{ width:190px; height:190px; }
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
+<div class="wrap">
 
-    <!-- HEADER -->
-    <div class="logo">
-      <img src="ups_logo.png" alt="UPS Store Logo">
-    </div>
-    <h1>The UPS Store Spotswood NJ</h1>
+  <div class="logo">
+    <img src="ups_logo.png" alt="UPS Store Logo">
+  </div>
+  <h1>The UPS Store Spotswood NJ</h1>
 
-    <!-- COPY EMAILS (PRIMARY) -->
-    <div class="section">
-      <div class="sectionTitle">Copy Emails</div>
-      <div class="sectionTip">
-        If copy is blocked, we’ll open your mail app instead.
-      </div>
+  <!-- MAIN BUTTONS -->
+  <div class="section">
+    <div class="sectionTitle">Copy Emails</div>
 
-      <div class="copyRow">
-        <button class="copyBtn green" id="copyStore">Copy Store Email</button>
-
-        <!-- Guest Wi-Fi button (copies Wi-Fi details) -->
-        <button class="copyBtn lightblue" id="copyWifi">Guest Wi-Fi</button>
-
-        <button class="copyBtn red" id="copyGmail">Copy Gmail</button>
-      </div>
-
-      <!-- NEW FULL-WIDTH BUTTON -->
-      <div class="fullRow">
-        <button class="fullBtn" id="goBoxCalc">Box Calculator</button>
-      </div>
-
-      <div class="hint" id="hint"></div>
+    <div class="copyRow">
+      <button class="copyBtn green" id="copyStore">Copy Store Email</button>
+      <button class="copyBtn wifiBtn" id="copyWifiTop">Guest Wi-Fi</button>
+      <button class="copyBtn red" id="copyGmail">Copy Gmail</button>
     </div>
 
-    <!-- WI-FI SECTION -->
-    <div class="section">
-      <div class="sectionTitle">Guest Wi-Fi</div>
-      <div class="sectionTip">Tap to copy, or scan to connect.</div>
-
-      <div class="formRow">
-        <div class="field">
-          <label for="wifiName">Wi-Fi name</label>
-          <input id="wifiName" value="UPS-Guest" autocomplete="off">
-        </div>
-
-        <div class="field">
-          <label for="wifiDetails">Wi-Fi details</label>
-
-          <!-- ======================================================
-               CHANGE THIS VALUE MONTHLY (NO SENSITIVE WORDS USED)
-               ====================================================== -->
-          <input id="wifiDetails" value="S0m3L!k3FL0weRS0t#3r5C@ndy" autocomplete="off">
-        </div>
-
-<!-- ======================================================
-               CHANGE THIS VALUE MONTHLY (NO SENSITIVE WORDS USED)
-               ====================================================== -->
-
-        
-        <div class="field">
-          <label for="wifiType">Wi-Fi type</label>
-          <select id="wifiType">
-            <option value="WPA" selected>WPA/WPA2</option>
-            <option value="WEP">WEP</option>
-            <option value="">Open</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="fullRow">
-        <button class="miniBtn" id="saveWifiImage">Save image</button>
-      </div>
-
-      <div class="qrRow">
-        <div class="qrCard" style="cursor:default;">
-          <div class="qrLogoWrap">
-            <img id="wifiImg" class="wifiImg" alt="Wi-Fi">
-            <img src="ups_logo.png" class="qrLogo" alt="UPS Logo">
-          </div>
-          <div class="qrLabel">Guest Wi-Fi</div>
-          <div class="qrSub" id="wifiSub"></div>
-        </div>
-      </div>
-
-      <div class="hint" id="wifiHint"></div>
+    <div class="fullRow">
+      <button class="fullBtn" id="goBoxCalc">Box Calculator</button>
     </div>
 
-    <!-- QR EMAILS (SECONDARY) -->
-    <div class="section">
-      <div class="sectionTitle">Tap or Scan to Email</div>
-      <div class="sectionTip">
-        Tapping a QR opens the email app, same as scanning.
-      </div>
-
-      <div class="qrRow">
-        <a class="qrCard" href="mailto:store4925@theupsstore.com">
-          <img src="qr_store_email.png" alt="Store Email QR">
-          <div class="qrLabel">Store Email</div>
-          <div class="qrSub">store4925@theupsstore.com</div>
-        </a>
-
-        <a class="qrCard" href="mailto:store4925@gmail.com">
-          <img src="qr_gmail.png" alt="Gmail QR">
-          <div class="qrLabel">Gmail</div>
-          <div class="qrSub">store4925@gmail.com</div>
-        </a>
-      </div>
-    </div>
+    <div class="hint" id="hint"></div>
   </div>
 
-  <script>
-    const hint = document.getElementById("hint");
+  <!-- GUEST WI-FI SECTION -->
+  <div class="section">
+    <div class="sectionTitle">Guest Wi-Fi</div>
+    <div class="sectionTip">Tap to copy, or scan to connect.</div>
 
-    async function copyEmail(email){
-      try{
-        await navigator.clipboard.writeText(email);
-        hint.textContent = "Copied: " + email;
-      }catch{
-        window.location.href = "mailto:" + email;
-        hint.textContent = "Opened mail app";
-      }
-      setTimeout(()=>hint.textContent="",2200);
-    }
+    <!-- SECOND GUEST WI-FI BUTTON (INSIDE THE BOX) -->
+    <div class="fullRow">
+      <button class="miniBtn" id="copyWifiInside">Copy Guest Wi-Fi</button>
+    </div>
 
-    document.getElementById("copyStore").onclick = () =>
-      copyEmail("store4925@theupsstore.com");
+    <div class="formRow">
+      <div class="field">
+        <label>Wi-Fi name</label>
+        <input id="wifiName" value="UPS-Guest">
+      </div>
 
-    document.getElementById("copyGmail").onclick = () =>
-      copyEmail("store4925@gmail.com");
+      <div class="field">
+        <label>Wi-Fi details</label>
+        <input id="wifiDetails" value="CHANGE_ME_MONTHLY">
+      </div>
 
-    // go to box calculator page
-    document.getElementById("goBoxCalc").onclick = () => {
-      window.location.href = "https://ups4925.github.io/box.html";
-    };
+      <div class="field">
+        <label>Wi-Fi type</label>
+        <select id="wifiType">
+          <option value="WPA" selected>WPA/WPA2</option>
+          <option value="WEP">WEP</option>
+          <option value="">Open</option>
+        </select>
+      </div>
+    </div>
 
-    const wifiNameEl = document.getElementById("wifiName");
-    const wifiDetailsEl = document.getElementById("wifiDetails");
-    const wifiTypeEl = document.getElementById("wifiType");
+    <div class="fullRow">
+      <button class="miniBtn" id="saveWifiImage">Save image</button>
+    </div>
 
-    const wifiImg = document.getElementById("wifiImg");
-    const wifiSub = document.getElementById("wifiSub");
-    const wifiHint = document.getElementById("wifiHint");
+    <div class="qrLogoWrap">
+      <img id="wifiImg" class="wifiImg" alt="Wi-Fi">
+      <img src="ups_logo.png" class="qrLogo" alt="UPS Logo">
+    </div>
 
-    document.getElementById("copyWifi").onclick = async () => {
-      try{
-        await navigator.clipboard.writeText(wifiDetailsEl.value);
-        hint.textContent = "Wi-Fi copied";
-      }catch{
-        hint.textContent = "Unable to copy";
-      }
-      setTimeout(()=>hint.textContent="",2200);
-    };
+    <div class="hint" id="wifiHint"></div>
+  </div>
 
-    function escWifi(str){
-      return String(str).replace(/([\\;,:"])/g, "\\$1");
-    }
+</div>
 
-    function makeWifiText(){
-      const n = escWifi(wifiNameEl.value.trim());
-      const t = wifiTypeEl.value;
-      const d = escWifi(wifiDetailsEl.value);
+<script>
+  const hint = document.getElementById("hint");
 
-      if(!t){
-        return `WIFI:T:;S:${n};;`;
-      }
-      return `WIFI:T:${t};S:${n};P:${d};;`;
-    }
-
-    function updateWifi(){
-      const nRaw = wifiNameEl.value.trim();
-      const tRaw = wifiTypeEl.value;
-
-      wifiSub.textContent = tRaw ? `${nRaw} • ${tRaw}` : `${nRaw} • Open`;
-
-      const text = makeWifiText();
-      const url =
-        "https://chart.googleapis.com/chart?cht=qr&chs=320x320&chld=M|1&chl=" +
-        encodeURIComponent(text);
-
-      wifiImg.src = url;
-
-      wifiHint.textContent = "Updated";
-      setTimeout(()=>wifiHint.textContent="",1600);
-    }
-
-    wifiNameEl.addEventListener("input", updateWifi);
-    wifiDetailsEl.addEventListener("input", updateWifi);
-    wifiTypeEl.addEventListener("change", updateWifi);
-
-    document.getElementById("saveWifiImage").addEventListener("click", () => {
-      const a = document.createElement("a");
-      a.href = wifiImg.src;
-      a.target = "_blank";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+  function copyText(text){
+    navigator.clipboard.writeText(text).then(()=>{
+      hint.textContent = "Copied";
+      setTimeout(()=>hint.textContent="",2000);
     });
+  }
 
-    updateWifi();
-  </script>
+  document.getElementById("copyStore").onclick = () =>
+    copyText("store4925@theupsstore.com");
+
+  document.getElementById("copyGmail").onclick = () =>
+    copyText("store4925@gmail.com");
+
+  document.getElementById("goBoxCalc").onclick = () =>
+    window.location.href = "https://ups4925.github.io/box.html";
+
+  const wifiName = document.getElementById("wifiName");
+  const wifiDetails = document.getElementById("wifiDetails");
+  const wifiType = document.getElementById("wifiType");
+  const wifiImg = document.getElementById("wifiImg");
+
+  function updateWifi(){
+    const n = encodeURIComponent(wifiName.value);
+    const d = encodeURIComponent(wifiDetails.value);
+    const t = wifiType.value;
+    const payload = t ? `WIFI:T:${t};S:${n};P:${d};;` : `WIFI:T:;S:${n};;`;
+    wifiImg.src =
+      "https://chart.googleapis.com/chart?cht=qr&chs=320x320&chl=" + payload;
+  }
+
+  document.getElementById("copyWifiTop").onclick =
+  document.getElementById("copyWifiInside").onclick = () =>
+    copyText(wifiDetails.value);
+
+  wifiName.oninput = updateWifi;
+  wifiDetails.oninput = updateWifi;
+  wifiType.onchange = updateWifi;
+
+  updateWifi();
+</script>
 </body>
 </html>
