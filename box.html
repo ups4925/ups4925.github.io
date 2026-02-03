@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Box Calculator</title>
+
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <style>
+    :root{
+      --lightblue:#7ec8ff;
+      --green:#28a745;
+      --red:#dc3545;
+      --blue:#0d6efd;
+      --card:#0d0d0d;
+      --text:#f2f2f2;
+      --muted:#b5b5b5;
+      --border: rgba(255,255,255,.12);
+    }
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:#000;
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:960px;
+      margin:0 auto;
+      padding:28px 16px 60px;
+    }
+
+    h1{
+      text-align:center;
+      color:var(--lightblue);
+      font-size:40px;
+      margin:14px 0 10px;
+      font-weight:800;
+    }
+
+    .sub{
+      text-align:center;
+      color:var(--muted);
+      font-size:14px;
+      margin:0 0 24px;
+    }
+
+    .section{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:24px;
+      box-shadow:0 12px 28px rgba(0,0,0,.4);
+      margin-bottom:20px;
+    }
+
+    .sectionTitle{
+      text-align:center;
+      font-weight:900;
+      font-size:22px;
+      margin-bottom:6px;
+    }
+
+    .sectionTip{
+      text-align:center;
+      font-size:14px;
+      color:var(--muted);
+      margin-bottom:20px;
+    }
+
+    .inputs{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+      margin-bottom:18px;
+    }
+
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+      letter-spacing:.2px;
+    }
+
+    input[type="number"]{
+      width:100%;
+      box-sizing:border-box;
+      padding:14px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      outline:none;
+      font-size:16px;
+    }
+
+    input[type="number"]:focus{
+      border-color: rgba(126,200,255,.6);
+      box-shadow: 0 0 0 4px rgba(126,200,255,.12);
+    }
+
+    @media (max-width:720px){
+      .inputs{ grid-template-columns:1fr; }
+    }
+
+    /* Button rows */
+    .copyRow{
+      display:flex;
+      gap:20px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    .copyBtn{
+      flex:1;
+      min-width:260px;
+      border:none;
+      border-radius:18px;
+      padding:22px 18px;
+      font-size:22px;
+      font-weight:900;
+      cursor:pointer;
+      color:#fff;
+      box-shadow:0 16px 36px rgba(0,0,0,.45);
+      transition: transform .06s ease, filter .12s ease;
+    }
+    .copyBtn:hover{ filter:brightness(1.08); }
+    .copyBtn:active{ transform:translateY(2px); }
+
+    .blue{ background:var(--blue); }
+    .mutedBtn{
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border:1px solid var(--border);
+      box-shadow:none;
+    }
+
+    /* Full-width back button */
+    .fullRow{
+      margin-top:20px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .fullBtn{
+      width:100%;
+      border:none;
+      border-radius:18px;
+      padding:22px 18px;
+      font-size:22px;
+      font-weight:900;
+      cursor:pointer;
+      color:#fff;
+      box-shadow:0 16px 36px rgba(0,0,0,.45);
+      transition: transform .06s ease, filter .12s ease;
+      background: var(--blue);
+    }
+    .fullBtn:hover{ filter:brightness(1.08); }
+    .fullBtn:active{ transform:translateY(2px); }
+
+    .hint{
+      text-align:center;
+      margin-top:18px;
+      min-height:22px;
+      font-weight:700;
+      color:var(--muted);
+      white-space: pre-wrap;
+    }
+
+    .resultGrid{
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .resultCard{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px 14px;
+      background:rgba(255,255,255,.03);
+    }
+
+    .resultTitle{
+      font-weight:900;
+      color:var(--lightblue);
+      text-transform:uppercase;
+      letter-spacing:.4px;
+      font-size:13px;
+      margin-bottom:8px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+    }
+
+    .pill{
+      font-size:12px;
+      font-weight:900;
+      border-radius:999px;
+      padding:5px 10px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      background: rgba(0,0,0,.2);
+      white-space:nowrap;
+    }
+    .pill.ok{ border-color: rgba(40,167,69,.5); color: rgba(40,167,69,.95); }
+    .pill.bad{ border-color: rgba(220,53,69,.5); color: rgba(220,53,69,.95); }
+
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+    }
+
+    details{
+      margin-top:16px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      overflow:hidden;
+      background:rgba(255,255,255,.02);
+    }
+
+    summary{
+      cursor:pointer;
+      padding:12px 14px;
+      color:var(--lightblue);
+      font-weight:900;
+      list-style:none;
+      border-bottom:1px solid var(--border);
+    }
+    summary::-webkit-details-marker{ display:none; }
+
+    .boxList{
+      padding:12px 14px;
+      color:var(--muted);
+      font-size:12px;
+      white-space:pre-wrap;
+    }
+
+    @media (max-width:720px){
+      .copyBtn{ font-size:20px; padding:20px 16px; }
+      .fullBtn{ font-size:20px; padding:20px 16px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <h1>Box Calculator</h1>
+    <div class="sub">Enter item dimensions in inches (padding included). Rotation is allowed.</div>
+
+    <div class="section">
+      <div class="sectionTitle">Item Dimensions</div>
+      <div class="sectionTip">Best fit (least wasted space) + one size up + one size down.</div>
+
+      <div class="inputs">
+        <div>
+          <label for="a">Dimension A</label>
+          <input id="a" type="number" min="0" step="0.125" placeholder="e.g. 12">
+        </div>
+        <div>
+          <label for="b">Dimension B</label>
+          <input id="b" type="number" min="0" step="0.125" placeholder="e.g. 10">
+        </div>
+        <div>
+          <label for="c">Dimension C</label>
+          <input id="c" type="number" min="0" step="0.125" placeholder="e.g. 8">
+        </div>
+      </div>
+
+      <div class="copyRow">
+        <button class="copyBtn blue" id="calcBtn">Calculate</button>
+        <button class="copyBtn mutedBtn" id="clearBtn">Clear</button>
+      </div>
+
+      <div class="resultGrid" id="results"></div>
+      <div class="hint" id="hint"></div>
+
+      <!-- NEW: Back button -->
+      <div class="fullRow">
+        <button class="fullBtn" id="backBtn">Back to Email Page</button>
+      </div>
+
+      <details>
+        <summary>Edit Box List (optional)</summary>
+        <div class="boxList" id="boxListPreview"></div>
+      </details>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // EDIT YOUR BOXES HERE
+    // =========================
+    const RAW_BOX_TEXT = `
+Area A
+18 × 14 x12 #44
+24 × 18 x 12
+22 × 18 x 16 #56
+20 × 16 × 14 #50
+24 x 18 x 18
+20 x 20 x 12
+24 × 6 x 6
+24 x 20 x 18 #04
+20 × 12 x 12 #20-12
+27 x 5 x23.5 SM PIC
+36 × 5.5 x29 MED PIC
+27 × 15 x 4 #30-4
+27 × 15 x 9 #30-9
+27 × 12 × 15 #30-12
+33 × 15 × 9 #36-9
+4 x4 x48
+24 × 24 × 16
+24 x 24x24
+41 × 6 × 36.5 XL PIC BOX (1 & O)
+49 1/8 x 4 5/8 × 32 7/8 LG PIC BOX
+28 × 24 × 20 #72T
+32 × 32 x 32
+36 x 22 x 22 EH CONTAINER
+34x28 × 26 #88RT
+53 × 7 × 30 BIKE BOX
+50 × 20 x 10 GUITAR BOX
+
+AREA B
+12 × 11 x 40 LAMP BOX
+30 × 24 x 6
+33 x 19 × 14 #34-14 SUITCASE BOX
+24 X 18 X 6
+6x6 x 48
+8x8 x 42 SKI BOX (1/O SET)
+26 X 20 X 4 MC-4
+26 X 20 X 8 MC-8
+16 × 14 x 10 #40
+15 × 12 × 10
+17 × 11 x 8
+17 x 11 × 10 IK1-25
+12 x 12 x 6
+10x8 × 6 #24
+8 × 6 × 4 #21
+6 × 6 x 6
+
+AREA C
+17 x 11 x 5 17-5
+16 x 16 x 4
+20 x 14 x 6 #20-6
+8 x 8 x 8
+10 x 10 x 10
+12 x 12 x 12
+14 x 14 x 14
+16 x 16 x 16
+18 x 18 x 18
+20 x 20 x 6 Wreath Box
+20 x 20 x 20
+25.5 x 25.5 x 25.5
+18 x 18 x 28 Dish Pack
+`.trim();
+
+    document.getElementById("boxListPreview").textContent = RAW_BOX_TEXT;
+
+    function parseMixedNumber(tokenStr){
+      const s = tokenStr.trim();
+      const mixed = s.match(/^(\d+(?:\.\d+)?)\s+(\d+)\s*\/\s*(\d+)$/);
+      if (mixed){
+        const whole = parseFloat(mixed[1]);
+        const num = parseInt(mixed[2],10);
+        const den = parseInt(mixed[3],10);
+        if (den === 0) return NaN;
+        return whole + (num/den);
+      }
+      const frac = s.match(/^(\d+)\s*\/\s*(\d+)$/);
+      if (frac){
+        const num = parseInt(frac[1],10);
+        const den = parseInt(frac[2],10);
+        if (den === 0) return NaN;
+        return num/den;
+      }
+      const n = parseFloat(s);
+      return Number.isFinite(n) ? n : NaN;
+    }
+
+    function normalizeLine(line){
+      return line
+        .replace(/[×X]/g, "x")
+        .replace(/\s+/g, " ")
+        .replace(/\s*x\s*/g, " x ")
+        .trim();
+    }
+
+    function parseBoxLine(line, area){
+      const raw = line.trim();
+      if (!raw) return null;
+
+      const norm = normalizeLine(raw);
+      const tokens = norm.split(" ");
+
+      let parts = [];
+      let cur = [];
+      for (const t of tokens){
+        if (t.toLowerCase() === "x"){
+          if (!cur.length) return null;
+          parts.push(cur.join(" "));
+          cur = [];
+        } else {
+          cur.push(t);
+        }
+      }
+      if (cur.length) parts.push(cur.join(" "));
+      if (parts.length < 3) return null;
+
+      const d1 = parseMixedNumber(parts[0]);
+      const d2 = parseMixedNumber(parts[1]);
+
+      const thirdTokens = parts.slice(2).join(" x ").split(" ");
+      let d3 = NaN;
+      let d3Len = 0;
+      for (let k = 1; k <= Math.min(4, thirdTokens.length); k++){
+        const attempt = thirdTokens.slice(0,k).join(" ");
+        const val = parseMixedNumber(attempt);
+        if (Number.isFinite(val)){
+          d3 = val;
+          d3Len = k;
+        }
+      }
+      if (!Number.isFinite(d1) || !Number.isFinite(d2) || !Number.isFinite(d3)) return null;
+
+      const tag = thirdTokens.slice(d3Len).join(" ").trim();
+      return { area, dims:[d1,d2,d3], tag: tag || "" };
+    }
+
+    function parseBoxes(rawText){
+      const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      let area = "";
+      const out = [];
+
+      for (const line of lines){
+        const m = line.match(/^area\s+([a-c])\b/i);
+        if (m){
+          area = `AREA ${m[1].toUpperCase()}`;
+          continue;
+        }
+        if (!area) continue;
+
+        const b = parseBoxLine(line, area);
+        if (b) out.push(b);
+      }
+      return out;
+    }
+
+    const BOXES = parseBoxes(RAW_BOX_TEXT);
+
+    const sort3 = (arr) => [...arr].sort((x,y)=>x-y);
+
+    function fits(item, box){
+      const i = sort3(item);
+      const b = sort3(box);
+      return i[0] <= b[0] && i[1] <= b[1] && i[2] <= b[2];
+    }
+
+    function slackVec(item, box){
+      const i = sort3(item);
+      const b = sort3(box);
+      return [b[0]-i[0], b[1]-i[1], b[2]-i[2]];
+    }
+
+    function volume(d){
+      const s = sort3(d);
+      return s[0]*s[1]*s[2];
+    }
+
+    function fitKey(item, boxDims){
+      const s = slackVec(item, boxDims);
+      return [Math.max(...s), (s[0]+s[1]+s[2]), volume(boxDims)];
+    }
+
+    function shortfallKey(item, boxDims){
+      const i = sort3(item);
+      const b = sort3(boxDims);
+      const sh = [
+        Math.max(0, i[0]-b[0]),
+        Math.max(0, i[1]-b[1]),
+        Math.max(0, i[2]-b[2]),
+      ];
+      const total = sh[0]+sh[1]+sh[2];
+      const maxSh = Math.max(...sh);
+      return [total, maxSh, volume(boxDims)];
+    }
+
+    function cmp(a,b){
+      for (let i=0;i<Math.min(a.length,b.length);i++){
+        if (a[i] < b[i]) return -1;
+        if (a[i] > b[i]) return 1;
+      }
+      return 0;
+    }
+
+    function fmtNum(n){
+      return (Math.round(n*1000)/1000).toString();
+    }
+    function fmtDims(d){
+      return `${fmtNum(d[0])} x ${fmtNum(d[1])} x ${fmtNum(d[2])}`;
+    }
+    function fmtLine(box){
+      const base = `${box.area} ${fmtDims(box.dims)}`;
+      return box.tag ? `${base} ${box.tag}` : base;
+    }
+
+    const elA = document.getElementById("a");
+    const elB = document.getElementById("b");
+    const elC = document.getElementById("c");
+    const results = document.getElementById("results");
+    const hint = document.getElementById("hint");
+
+    function addCard(title, pillText, pillClass, body){
+      const card = document.createElement("div");
+      card.className = "resultCard";
+
+      const top = document.createElement("div");
+      top.className = "resultTitle";
+
+      const t = document.createElement("div");
+      t.textContent = title;
+
+      const p = document.createElement("div");
+      p.className = `pill ${pillClass||""}`.trim();
+      p.textContent = pillText;
+
+      top.appendChild(t);
+      top.appendChild(p);
+
+      const b = document.createElement("div");
+      b.className = "mono";
+      b.textContent = body;
+
+      card.appendChild(top);
+      card.appendChild(b);
+      results.appendChild(card);
+    }
+
+    function clearAll(){
+      elA.value = ""; elB.value = ""; elC.value = "";
+      results.innerHTML = "";
+      hint.textContent = "";
+      elA.focus();
+    }
+
+    function calc(){
+      results.innerHTML = "";
+      hint.textContent = "";
+
+      const a = parseFloat(elA.value);
+      const b = parseFloat(elB.value);
+      const c = parseFloat(elC.value);
+
+      if (![a,b,c].every(v => Number.isFinite(v) && v > 0)){
+        addCard("Input Needed", "error", "bad", "Enter 3 positive numbers.");
+        return;
+      }
+
+      const item = [a,b,c];
+
+      const fitting = BOXES
+        .filter(x => fits(item, x.dims))
+        .map(x => ({ box:x, key: fitKey(item, x.dims) }))
+        .sort((m,n)=>cmp(m.key,n.key));
+
+      if (fitting.length){
+        const best = fitting[0].box;
+        const up = fitting[1]?.box || null;
+
+        // One size smaller: closest smaller-by-volume box (may not fit)
+        const bestVol = volume(best.dims);
+        const downs = BOXES
+          .filter(x => volume(x.dims) < bestVol)
+          .map(x => ({ box:x, key: shortfallKey(item, x.dims) }))
+          .sort((m,n)=>cmp(m.key,n.key));
+        const down = downs[0]?.box || null;
+
+        addCard("Best Fit", "fits", "ok", fmtLine(best));
+        addCard("One Size Bigger", up ? "fits" : "none", up ? "ok" : "", up ? fmtLine(up) : "No larger fitting box found.");
+
+        if (down){
+          const doesFit = fits(item, down.dims);
+          addCard("One Size Smaller", doesFit ? "fits" : "may not fit", doesFit ? "ok" : "bad", fmtLine(down));
+        } else {
+          addCard("One Size Smaller", "none", "", "No smaller option found.");
+        }
+        return;
+      }
+
+      // No fit: show closest 3
+      addCard("No Box Fits", "too large", "bad", "No box in the list can fit this item.\nShowing closest boxes:");
+
+      const closest = BOXES
+        .map(x => ({ box:x, key: shortfallKey(item, x.dims) }))
+        .sort((m,n)=>cmp(m.key,n.key))
+        .slice(0,3)
+        .map(x => x.box);
+
+      closest.forEach((bx, i) => addCard(`Closest #${i+1}`, "does not fit", "bad", fmtLine(bx)));
+    }
+
+    document.getElementById("calcBtn").onclick = calc;
+    document.getElementById("clearBtn").onclick = clearAll;
+
+    // NEW: Back button behavior
+    document.getElementById("backBtn").onclick = () => {
+      // Go back if possible, otherwise go to your home page
+      if (history.length > 1) history.back();
+      else window.location.href = "https://ups4925.github.io/";
+    };
+
+    [elA, elB, elC].forEach(inp => {
+      inp.addEventListener("keydown", e => {
+        if (e.key === "Enter") calc();
+      });
+    });
+  </script>
+</body>
+</html>
