@@ -282,7 +282,6 @@
       <div class="resultGrid" id="results"></div>
       <div class="hint" id="hint"></div>
 
-      <!-- NEW: Back button -->
       <div class="fullRow">
         <button class="fullBtn" id="backBtn">Back to Email Page</button>
       </div>
@@ -505,9 +504,22 @@ AREA C
     function fmtDims(d){
       return `${fmtNum(d[0])} x ${fmtNum(d[1])} x ${fmtNum(d[2])}`;
     }
-    function fmtLine(box){
-      const base = `${box.area} ${fmtDims(box.dims)}`;
-      return box.tag ? `${base} ${box.tag}` : base;
+
+    function fmtVol(n){
+      const rounded = Math.round((n + Number.EPSILON) * 100) / 100;
+      return rounded.toLocaleString();
+    }
+
+    function fmtLineWithVolume(box, itemVol){
+      const boxVol = volume(box.dims);
+      const waste = boxVol - itemVol;
+
+      const base = `${box.area} ${fmtDims(box.dims)}${box.tag ? " " + box.tag : ""}`;
+      return (
+        `${base}\n` +
+        `Box Volume:   ${fmtVol(boxVol)} in³\n` +
+        `Wasted Space: ${fmtVol(waste)} in³`
+      );
     }
 
     const elA = document.getElementById("a");
@@ -563,6 +575,15 @@ AREA C
       }
 
       const item = [a,b,c];
+      const itemVol = volume(item);
+
+      // NEW: Item Volume card
+      addCard(
+        "Item",
+        "volume",
+        "",
+        `Item Dimensions: ${fmtDims(item)}\nItem Volume:     ${fmtVol(itemVol)} in³`
+      );
 
       const fitting = BOXES
         .filter(x => fits(item, x.dims))
@@ -581,20 +602,48 @@ AREA C
           .sort((m,n)=>cmp(m.key,n.key));
         const down = downs[0]?.box || null;
 
-        addCard("Best Fit", "fits", "ok", fmtLine(best));
-        addCard("One Size Bigger", up ? "fits" : "none", up ? "ok" : "", up ? fmtLine(up) : "No larger fitting box found.");
+        // NEW: Closest by volume among boxes that FITS (least wasted volume)
+        const closestByVolume = fitting
+          .map(x => {
+            const bv = volume(x.box.dims);
+            return { box: x.box, waste: (bv - itemVol), boxVol: bv };
+          })
+          .sort((m,n) => (m.waste - n.waste) || (m.boxVol - n.boxVol))[0]?.box || null;
+
+        addCard("Best Fit", "fits", "ok", fmtLineWithVolume(best, itemVol));
+
+        addCard(
+          "Closest by Volume (fits)",
+          closestByVolume ? "fits" : "none",
+          closestByVolume ? "ok" : "",
+          closestByVolume ? fmtLineWithVolume(closestByVolume, itemVol) : "No fitting box found."
+        );
+
+        addCard(
+          "One Size Bigger",
+          up ? "fits" : "none",
+          up ? "ok" : "",
+          up ? fmtLineWithVolume(up, itemVol) : "No larger fitting box found."
+        );
 
         if (down){
           const doesFit = fits(item, down.dims);
-          addCard("One Size Smaller", doesFit ? "fits" : "may not fit", doesFit ? "ok" : "bad", fmtLine(down));
+          addCard(
+            "One Size Smaller",
+            doesFit ? "fits" : "may not fit",
+            doesFit ? "ok" : "bad",
+            fmtLineWithVolume(down, itemVol)
+          );
         } else {
           addCard("One Size Smaller", "none", "", "No smaller option found.");
         }
         return;
       }
 
-      // No fit: show closest 3
-      addCard("No Box Fits", "too large", "bad", "No box in the list can fit this item.\nShowing closest boxes:");
+      // No fit: show closest 3 (still include each box volume)
+      addCard("No Box Fits", "too large", "bad",
+        `No box in the list can fit this item.\nItem Volume: ${fmtVol(itemVol)} in³\nShowing closest boxes:`
+      );
 
       const closest = BOXES
         .map(x => ({ box:x, key: shortfallKey(item, x.dims) }))
@@ -602,15 +651,24 @@ AREA C
         .slice(0,3)
         .map(x => x.box);
 
-      closest.forEach((bx, i) => addCard(`Closest #${i+1}`, "does not fit", "bad", fmtLine(bx)));
+      closest.forEach((bx, i) => {
+        // waste here is just boxVol - itemVol (will be negative sometimes if box smaller)
+        const boxVol = volume(bx.dims);
+        const diff = boxVol - itemVol;
+        const base = `${bx.area} ${fmtDims(bx.dims)}${bx.tag ? " " + bx.tag : ""}`;
+        const body =
+          `${base}\n` +
+          `Box Volume:  ${fmtVol(boxVol)} in³\n` +
+          `Vol Diff:    ${fmtVol(diff)} in³\n` +
+          `Note: This box does NOT fit by dimensions.`;
+        addCard(`Closest #${i+1}`, "does not fit", "bad", body);
+      });
     }
 
     document.getElementById("calcBtn").onclick = calc;
     document.getElementById("clearBtn").onclick = clearAll;
 
-    // NEW: Back button behavior
     document.getElementById("backBtn").onclick = () => {
-      // Go back if possible, otherwise go to your home page
       if (history.length > 1) history.back();
       else window.location.href = "https://ups4925.github.io/";
     };
