@@ -126,6 +126,39 @@
       box-shadow:0 16px 36px rgba(0,0,0,.45);
     }
 
+    /* NEW: Grey clipboard check button */
+    .greyBtn{
+      width:100%;
+      border:none;
+      border-radius:18px;
+      padding:18px 24px;
+      cursor:pointer;
+      color:#fff;
+      background:#5a5a5a;
+      box-shadow:0 16px 36px rgba(0,0,0,.45);
+      text-align:center;
+    }
+    .greyBtnTop{
+      font-size:16px;
+      font-weight:900;
+      color:#eaeaea;
+      margin-bottom:10px;
+    }
+    .greyBtnMid{
+      font-size:20px;
+      font-weight:900;
+      color:#ffffff;
+      word-break:break-word;
+      min-height:28px;
+    }
+    .greyBtnSub{
+      margin-top:10px;
+      font-size:12px;
+      font-weight:800;
+      color:#d0d0d0;
+      opacity:.9;
+    }
+
     .hint{
       text-align:center;
       margin-top:18px;
@@ -200,6 +233,48 @@
       font-size:12px;
       color:var(--muted);
     }
+
+    /* NEW: Fullscreen copied overlay */
+    .copyOverlay{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.72);
+      z-index:9999;
+      padding:22px;
+    }
+    .copyOverlay.show{ display:flex; }
+
+    .copyOverlayBox{
+      width:min(720px, 94vw);
+      border-radius:22px;
+      border:1px solid var(--border);
+      background:#101010;
+      box-shadow:0 24px 70px rgba(0,0,0,.65);
+      padding:22px 22px 18px;
+      text-align:center;
+    }
+    .copyOverlayMain{
+      font-size:26px;
+      font-weight:1000;
+      line-height:1.15;
+      margin-bottom:10px;
+      word-break:break-word;
+    }
+    .copyOverlaySub{
+      font-size:18px;
+      font-weight:900;
+      color:var(--muted);
+    }
+    .copyOverlayHint{
+      margin-top:14px;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+      opacity:.9;
+    }
   </style>
 </head>
 
@@ -224,6 +299,15 @@
     <!-- BOX CALCULATOR BUTTON (RESTORED) -->
     <div class="fullRow">
       <button class="fullBtn" id="goBoxCalc">Box Calculator</button>
+    </div>
+
+    <!-- NEW: CLIPBOARD CHECK BUTTON (GREY) -->
+    <div class="fullRow">
+      <button class="greyBtn" id="checkClipboard" aria-label="Click to check clipboard">
+        <div class="greyBtnTop">Click to check clipboard</div>
+        <div class="greyBtnMid" id="clipboardPreview">—</div>
+        <div class="greyBtnSub">Shows the last thing copied here (and may read clipboard if allowed)</div>
+      </button>
     </div>
 
     <div class="hint" id="hint"></div>
@@ -284,18 +368,66 @@
 
 </div>
 
+<!-- NEW: COPIED OVERLAY -->
+<div class="copyOverlay" id="copyOverlay" role="dialog" aria-live="polite" aria-label="Copied to clipboard">
+  <div class="copyOverlayBox">
+    <div class="copyOverlayMain" id="copyOverlayText">Copied</div>
+    <div class="copyOverlaySub">Double tap to paste</div>
+    <div class="copyOverlayHint">Tap anywhere to close</div>
+  </div>
+</div>
+
 <script>
   const hint = document.getElementById("hint");
   const wifiHint = document.getElementById("wifiHint");
 
+  const copyOverlay = document.getElementById("copyOverlay");
+  const copyOverlayText = document.getElementById("copyOverlayText");
+
+  const clipboardPreview = document.getElementById("clipboardPreview");
+
+  // Stores whatever was last copied using your buttons (works even if clipboard read is blocked).
+  let lastCopied = "";
+
+  function showCopiedOverlay(text){
+    // Make it readable if it's super long (Wi-Fi password etc.)
+    const max = 120;
+    const shown = (text && text.length > max) ? (text.slice(0, max) + "…") : (text || "");
+    copyOverlayText.textContent = `${shown} has been copied to clipboard`;
+    copyOverlay.classList.add("show");
+
+    // Auto-hide after a moment (still closable by tap)
+    clearTimeout(showCopiedOverlay._t);
+    showCopiedOverlay._t = setTimeout(() => {
+      copyOverlay.classList.remove("show");
+    }, 1800);
+  }
+
+  // Tap overlay to close
+  copyOverlay.addEventListener("click", () => copyOverlay.classList.remove("show"));
+
+  function setHint(target, msg){
+    target.textContent = msg;
+    setTimeout(()=>target.textContent="",2000);
+  }
+
   async function copyText(text, target){
+    lastCopied = text;
     try{
       await navigator.clipboard.writeText(text);
-      target.textContent = "Copied";
+      setHint(target, "Copied");
+      showCopiedOverlay(text);
     }catch{
-      target.textContent = "Unable to copy";
+      // If clipboard write is blocked, fallback:
+      setHint(target, "Unable to copy (opening mail app)");
+      // Still show overlay with what we attempted to copy (helps staff)
+      showCopiedOverlay(text);
+
+      // Optional fallback for emails only: open mail app
+      if (text.includes("@")) {
+        window.location.href = "mailto:" + encodeURIComponent(text);
+      }
     }
-    setTimeout(()=>target.textContent="",2000);
   }
 
   document.getElementById("copyStore").onclick = () =>
@@ -309,6 +441,22 @@
 
   document.getElementById("goBoxCalc").onclick = () =>
     window.location.href = "https://ups4925.github.io/box.html";
+
+  // NEW: Check clipboard button behavior
+  document.getElementById("checkClipboard").onclick = async () => {
+    // First show what we *know* was last copied via your buttons.
+    clipboardPreview.textContent = lastCopied ? lastCopied : "Nothing copied yet";
+
+    // Then try to read the system clipboard (only works in some browsers / contexts).
+    try{
+      const real = await navigator.clipboard.readText();
+      if (real && real.trim()){
+        clipboardPreview.textContent = real;
+      }
+    }catch{
+      // If blocked, we keep the lastCopied preview.
+    }
+  };
 </script>
 </body>
 </html>
