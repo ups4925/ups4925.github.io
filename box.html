@@ -248,7 +248,44 @@
       .fullBtn{ font-size:20px; padding:20px 16px; }
     }
 
-    /* NEW: 3-column layout for options */
+    /* NEW: mode toggle */
+    .modeRow{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .modeBtn{
+      flex:1;
+      min-width:260px;
+      border:none;
+      border-radius:18px;
+      padding:16px 14px;
+      font-size:16px;
+      font-weight:900;
+      cursor:pointer;
+      color:#fff;
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      box-shadow:none;
+      transition: transform .06s ease, filter .12s ease;
+    }
+    .modeBtn.active{
+      background: var(--blue);
+      border-color: rgba(13,110,253,.6);
+      box-shadow:0 16px 36px rgba(0,0,0,.35);
+    }
+    .modeBtn:active{ transform:translateY(2px); }
+
+    /* NEW: volume-only input */
+    .volumeOnly{
+      display:none;
+      margin-bottom:18px;
+    }
+    .volumeOnly.show{ display:block; }
+
+    /* NEW: 3-column layout for results */
     .resultGridCols{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
@@ -264,13 +301,20 @@
 <body>
   <div class="wrap">
     <h1>Box Calculator</h1>
-    <div class="sub">Enter item dimensions in inches (padding included). Rotation is allowed.</div>
+    <div class="sub">Choose dimension mode or volume-only mode.</div>
 
     <div class="section">
-      <div class="sectionTitle">Item Dimensions</div>
-      <div class="sectionTip">Best / Bigger / Smaller — each shows closest by dimensions + closest by volume.</div>
+      <div class="sectionTitle">Item Input</div>
+      <div class="sectionTip">Dimensions mode uses rotation fit. Volume mode picks by cubic inches only.</div>
 
-      <div class="inputs">
+      <!-- NEW: Mode Toggle -->
+      <div class="modeRow">
+        <button class="modeBtn active" id="modeDims">Dimensions Mode</button>
+        <button class="modeBtn" id="modeVol">Volume Only Mode</button>
+      </div>
+
+      <!-- Dimensions inputs -->
+      <div class="inputs" id="dimsInputs">
         <div>
           <label for="a">Dimension A</label>
           <input id="a" type="number" min="0" step="0.125" placeholder="e.g. 12">
@@ -282,6 +326,14 @@
         <div>
           <label for="c">Dimension C</label>
           <input id="c" type="number" min="0" step="0.125" placeholder="e.g. 8">
+        </div>
+      </div>
+
+      <!-- NEW: Volume-only input -->
+      <div class="volumeOnly" id="volInputs">
+        <div>
+          <label for="v">Item Volume (in³)</label>
+          <input id="v" type="number" min="0" step="1" placeholder="e.g. 960">
         </div>
       </div>
 
@@ -523,11 +575,12 @@ AREA C
       const base = `${box.area} ${fmtDims(box.dims)}`;
       return box.tag ? `${base} ${box.tag}` : base;
     }
-    function boxInfoText(box, itemVol, item){
+
+    // For dimension-mode display
+    function boxInfoTextDimMode(box, itemVol, item){
       const boxVol = volume(box.dims);
       const waste = boxVol - itemVol;
       const doesFit = fits(item, box.dims);
-
       return (
         `${fmtBoxLine(box)}\n` +
         `Box Volume:   ${fmtVol(boxVol)} in³\n` +
@@ -536,11 +589,53 @@ AREA C
       );
     }
 
+    // For volume-only mode display (no "Fit" since we don’t know dimensions)
+    function boxInfoTextVolMode(box, itemVol){
+      const boxVol = volume(box.dims);
+      const waste = boxVol - itemVol;
+      return (
+        `${fmtBoxLine(box)}\n` +
+        `Box Volume:   ${fmtVol(boxVol)} in³\n` +
+        `Wasted Space: ${fmtVol(waste)} in³`
+      );
+    }
+
     const elA = document.getElementById("a");
     const elB = document.getElementById("b");
     const elC = document.getElementById("c");
+    const elV = document.getElementById("v");
+
+    const dimsInputs = document.getElementById("dimsInputs");
+    const volInputs = document.getElementById("volInputs");
+
+    const modeDimsBtn = document.getElementById("modeDims");
+    const modeVolBtn = document.getElementById("modeVol");
+
     const results = document.getElementById("results");
     const hint = document.getElementById("hint");
+
+    let mode = "dims"; // "dims" or "vol"
+
+    function setMode(next){
+      mode = next;
+      if (mode === "dims"){
+        modeDimsBtn.classList.add("active");
+        modeVolBtn.classList.remove("active");
+        dimsInputs.style.display = "";
+        volInputs.classList.remove("show");
+        hint.textContent = "";
+      } else {
+        modeVolBtn.classList.add("active");
+        modeDimsBtn.classList.remove("active");
+        dimsInputs.style.display = "none";
+        volInputs.classList.add("show");
+        hint.textContent = "";
+      }
+      results.innerHTML = "";
+    }
+
+    modeDimsBtn.onclick = () => setMode("dims");
+    modeVolBtn.onclick = () => setMode("vol");
 
     function addCard(title, pillText, pillClass, body){
       const card = document.createElement("div");
@@ -568,8 +663,8 @@ AREA C
       results.appendChild(card);
     }
 
-    // Creates ONE column card with 2 choices inside it
-    function addColumnCard(title, dimChoice, volChoice, itemVol, item){
+    // Column card for DIMENSION MODE (dims + vol choices)
+    function addColumnCardDimMode(title, dimChoice, volChoice, itemVol, item){
       const card = document.createElement("div");
       card.className = "resultCard";
 
@@ -589,8 +684,8 @@ AREA C
       const body = document.createElement("div");
       body.className = "mono";
 
-      const dimText = dimChoice ? boxInfoText(dimChoice, itemVol, item) : "None found.";
-      const volText = volChoice ? boxInfoText(volChoice, itemVol, item) : "None found.";
+      const dimText = dimChoice ? boxInfoTextDimMode(dimChoice, itemVol, item) : "None found.";
+      const volText = volChoice ? boxInfoTextDimMode(volChoice, itemVol, item) : "None found.";
 
       body.textContent =
         `Closest Dimensions:\n${dimText}\n` +
@@ -602,14 +697,43 @@ AREA C
       return card;
     }
 
-    function clearAll(){
-      elA.value = ""; elB.value = ""; elC.value = "";
-      results.innerHTML = "";
-      hint.textContent = "";
-      elA.focus();
+    // NEW: Column card for VOLUME-ONLY MODE (best/bigger/smaller only)
+    function addColumnCardVolOnly(title, boxChoice, itemVol, pill){
+      const card = document.createElement("div");
+      card.className = "resultCard";
+
+      const top = document.createElement("div");
+      top.className = "resultTitle";
+
+      const t = document.createElement("div");
+      t.textContent = title;
+
+      const p = document.createElement("div");
+      p.className = "pill";
+      p.textContent = pill;
+
+      top.appendChild(t);
+      top.appendChild(p);
+
+      const body = document.createElement("div");
+      body.className = "mono";
+
+      body.textContent = boxChoice ? boxInfoTextVolMode(boxChoice, itemVol) : "None found.";
+
+      card.appendChild(top);
+      card.appendChild(body);
+      return card;
     }
 
-    function calc(){
+    function clearAll(){
+      elA.value = ""; elB.value = ""; elC.value = ""; elV.value = "";
+      results.innerHTML = "";
+      hint.textContent = "";
+      if (mode === "dims") elA.focus();
+      else elV.focus();
+    }
+
+    function calcDimsMode(){
       results.innerHTML = "";
       hint.textContent = "";
 
@@ -625,7 +749,6 @@ AREA C
       const item = [a,b,c];
       const itemVol = volume(item);
 
-      // Item card
       addCard(
         "Item",
         "volume",
@@ -633,7 +756,6 @@ AREA C
         `Item Dimensions: ${fmtDims(item)}\nItem Volume:     ${fmtVol(itemVol)} in³`
       );
 
-      // Fitting boxes
       const fitting = BOXES
         .filter(x => fits(item, x.dims))
         .map(x => ({ box:x, key: fitKey(item, x.dims) }))
@@ -668,14 +790,14 @@ AREA C
       const bestDim = fitting[0].box;
       const biggerDim = fitting[1]?.box || null;
 
-      // One size smaller (dimensions): your original "best smaller-by-volume candidate"
+      // One size smaller (dimensions): your original smaller-by-volume candidate with best shortfall
       const bestDimVol = volume(bestDim.dims);
       const downDim = BOXES
         .filter(x => volume(x.dims) < bestDimVol)
         .map(x => ({ box:x, key: shortfallKey(item, x.dims) }))
         .sort((m,n)=>cmp(m.key,n.key))[0]?.box || null;
 
-      // Closest by VOLUME (among boxes that FIT)
+      // Closest by VOLUME among fitting boxes
       const fittingByVolume = fitting
         .map(x => {
           const bv = volume(x.box.dims);
@@ -701,15 +823,64 @@ AREA C
             .sort((m,n)=>cmp(m.key,n.key))[0]?.box || null
         : null;
 
-      // Render 3 columns
       const cols = document.createElement("div");
       cols.className = "resultGridCols";
 
-      cols.appendChild(addColumnCard("Best Fit", bestDim, bestVol, itemVol, item));
-      cols.appendChild(addColumnCard("One Size Bigger", biggerDim, biggerVol, itemVol, item));
-      cols.appendChild(addColumnCard("One Size Smaller", downDim, downVol, itemVol, item));
+      cols.appendChild(addColumnCardDimMode("Best Fit", bestDim, bestVol, itemVol, item));
+      cols.appendChild(addColumnCardDimMode("One Size Bigger", biggerDim, biggerVol, itemVol, item));
+      cols.appendChild(addColumnCardDimMode("One Size Smaller", downDim, downVol, itemVol, item));
 
       results.appendChild(cols);
+    }
+
+    // NEW: Volume-only calculation (just 3 boxes by volume)
+    function calcVolOnlyMode(){
+      results.innerHTML = "";
+      hint.textContent = "";
+
+      const v = parseFloat(elV.value);
+      if (!(Number.isFinite(v) && v > 0)){
+        addCard("Input Needed", "error", "bad", "Enter a positive volume in cubic inches (in³).");
+        return;
+      }
+
+      const itemVol = v;
+
+      addCard(
+        "Item",
+        "volume",
+        "",
+        `Item Volume: ${fmtVol(itemVol)} in³\nNote: Volume-only mode ignores dimensions (fit not guaranteed).`
+      );
+
+      // Sort boxes by volume
+      const allByVol = BOXES
+        .map(bx => ({ box: bx, boxVol: volume(bx.dims) }))
+        .sort((m,n)=> m.boxVol - n.boxVol);
+
+      // Best = smallest box volume that is >= itemVol (if none, pick largest)
+      let best = allByVol.find(x => x.boxVol >= itemVol) || allByVol[allByVol.length - 1];
+
+      // Bigger = next larger volume (if exists)
+      const bestIdx = allByVol.indexOf(best);
+      const bigger = (bestIdx >= 0 && bestIdx + 1 < allByVol.length) ? allByVol[bestIdx + 1] : null;
+
+      // Smaller = immediate previous volume (if exists)
+      const smaller = (bestIdx > 0) ? allByVol[bestIdx - 1] : null;
+
+      const cols = document.createElement("div");
+      cols.className = "resultGridCols";
+
+      cols.appendChild(addColumnCardVolOnly("Best Fit (by Volume)", best?.box || null, itemVol, "volume"));
+      cols.appendChild(addColumnCardVolOnly("One Size Bigger", bigger?.box || null, itemVol, bigger ? "volume" : "none"));
+      cols.appendChild(addColumnCardVolOnly("One Size Smaller", smaller?.box || null, itemVol, smaller ? "volume" : "none"));
+
+      results.appendChild(cols);
+    }
+
+    function calc(){
+      if (mode === "dims") calcDimsMode();
+      else calcVolOnlyMode();
     }
 
     document.getElementById("calcBtn").onclick = calc;
@@ -720,11 +891,18 @@ AREA C
       else window.location.href = "https://ups4925.github.io/";
     };
 
+    // Enter to calculate
     [elA, elB, elC].forEach(inp => {
       inp.addEventListener("keydown", e => {
-        if (e.key === "Enter") calc();
+        if (e.key === "Enter" && mode === "dims") calc();
       });
     });
+    elV.addEventListener("keydown", e => {
+      if (e.key === "Enter" && mode === "vol") calc();
+    });
+
+    // Start in dims mode
+    setMode("dims");
   </script>
 </body>
 </html>
