@@ -126,7 +126,7 @@
       box-shadow:0 16px 36px rgba(0,0,0,.45);
     }
 
-    /* NEW: Grey clipboard check button */
+    /* Grey clipboard check button */
     .greyBtn{
       width:100%;
       border:none;
@@ -234,7 +234,7 @@
       color:var(--muted);
     }
 
-    /* NEW: Fullscreen copied overlay */
+    /* Fullscreen copied overlay */
     .copyOverlay{
       position:fixed;
       inset:0;
@@ -286,7 +286,7 @@
   </div>
   <h1>The UPS Store Spotswood NJ</h1>
 
-  <!-- COPY EMAILS -->
+  <!-- SECTION 1: COPY EMAILS + CLIPBOARD CHECK -->
   <div class="section">
     <div class="sectionTitle">Copy Emails</div>
     <div class="sectionTip">If copy is blocked, we’ll open your mail app instead.</div>
@@ -296,12 +296,6 @@
       <button class="copyBtn red" id="copyGmail">Copy Gmail</button>
     </div>
 
-    <!-- BOX CALCULATOR BUTTON (RESTORED) -->
-    <div class="fullRow">
-      <button class="fullBtn" id="goBoxCalc">Box Calculator</button>
-    </div>
-
-    <!-- NEW: CLIPBOARD CHECK BUTTON (GREY) -->
     <div class="fullRow">
       <button class="greyBtn" id="checkClipboard" aria-label="Click to check clipboard">
         <div class="greyBtnTop">Click to check clipboard</div>
@@ -311,6 +305,16 @@
     </div>
 
     <div class="hint" id="hint"></div>
+  </div>
+
+  <!-- SECTION 2: BOX CALCULATOR ONLY -->
+  <div class="section">
+    <div class="sectionTitle">Box Calculator</div>
+    <div class="sectionTip">Tap to open the box calculator.</div>
+
+    <div class="fullRow" style="margin-top:0;">
+      <button class="fullBtn" id="goBoxCalc">Box Calculator</button>
+    </div>
   </div>
 
   <!-- GUEST WI-FI INFO -->
@@ -326,16 +330,13 @@
 
       <div class="field">
         <label>Wi-Fi details</label>
-
-          <!-- ======================================================
-               CHANGE THIS VALUE MONTHLY (NO SENSITIVE WORDS USED)
-               ====================================================== -->
-          <input id="wifiDetails" value="S0m3L!k3FL0weRS0t#3r5C@ndy" autocomplete="off">
-
-<!-- ======================================================
-               CHANGE THIS VALUE MONTHLY (NO SENSITIVE WORDS USED)
-               ====================================================== -->
-        
+        <!-- ======================================================
+             CHANGE THIS VALUE MONTHLY (NO SENSITIVE WORDS USED)
+             ====================================================== -->
+        <input id="wifiDetails" value="S0m3L!k3FL0weRS0t#3r5C@ndy" autocomplete="off">
+        <!-- ======================================================
+             CHANGE THIS VALUE MONTHLY (NO SENSITIVE WORDS USED)
+             ====================================================== -->
       </div>
 
       <button class="copyBtn wifiBtn" id="copyWifi" style="min-width:260px;">
@@ -368,7 +369,7 @@
 
 </div>
 
-<!-- NEW: COPIED OVERLAY -->
+<!-- COPIED OVERLAY -->
 <div class="copyOverlay" id="copyOverlay" role="dialog" aria-live="polite" aria-label="Copied to clipboard">
   <div class="copyOverlayBox">
     <div class="copyOverlayMain" id="copyOverlayText">Copied</div>
@@ -386,24 +387,20 @@
 
   const clipboardPreview = document.getElementById("clipboardPreview");
 
-  // Stores whatever was last copied using your buttons (works even if clipboard read is blocked).
   let lastCopied = "";
 
   function showCopiedOverlay(text){
-    // Make it readable if it's super long (Wi-Fi password etc.)
     const max = 120;
     const shown = (text && text.length > max) ? (text.slice(0, max) + "…") : (text || "");
     copyOverlayText.textContent = `${shown} has been copied to clipboard`;
     copyOverlay.classList.add("show");
 
-    // Auto-hide after a moment (still closable by tap)
     clearTimeout(showCopiedOverlay._t);
     showCopiedOverlay._t = setTimeout(() => {
       copyOverlay.classList.remove("show");
     }, 1800);
   }
 
-  // Tap overlay to close
   copyOverlay.addEventListener("click", () => copyOverlay.classList.remove("show"));
 
   function setHint(target, msg){
@@ -418,12 +415,9 @@
       setHint(target, "Copied");
       showCopiedOverlay(text);
     }catch{
-      // If clipboard write is blocked, fallback:
       setHint(target, "Unable to copy (opening mail app)");
-      // Still show overlay with what we attempted to copy (helps staff)
       showCopiedOverlay(text);
 
-      // Optional fallback for emails only: open mail app
       if (text.includes("@")) {
         window.location.href = "mailto:" + encodeURIComponent(text);
       }
@@ -442,19 +436,15 @@
   document.getElementById("goBoxCalc").onclick = () =>
     window.location.href = "https://ups4925.github.io/box.html";
 
-  // NEW: Check clipboard button behavior
   document.getElementById("checkClipboard").onclick = async () => {
-    // First show what we *know* was last copied via your buttons.
     clipboardPreview.textContent = lastCopied ? lastCopied : "Nothing copied yet";
-
-    // Then try to read the system clipboard (only works in some browsers / contexts).
     try{
       const real = await navigator.clipboard.readText();
       if (real && real.trim()){
         clipboardPreview.textContent = real;
       }
     }catch{
-      // If blocked, we keep the lastCopied preview.
+      // ignore if blocked
     }
   };
 </script>
